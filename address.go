@@ -368,7 +368,7 @@ func (a *AddressStakePubKeyHash) ScriptAddress() []byte {
 // IsForNet returns whether or not the pay-to-pubkey-hash address is associated
 // with the passed bitcoin network.
 func (a *AddressStakePubKeyHash) IsForNet(net *chaincfg.Params) bool {
-	return bytes.Equal(a.netID, net.PubKeyHashAddrID)
+	return bytes.Equal(a.netID, net.StakePubKeyHashAddrID)
 }
 
 // String returns a human-readable string for the pay-to-pubkey-hash address.
