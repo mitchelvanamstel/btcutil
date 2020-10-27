@@ -13,7 +13,7 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilD/base58"
+	"github.com/martinboehm/btcutil/base58"
 )
 
 // These variables are the chain proof-of-work limit parameters for each default
