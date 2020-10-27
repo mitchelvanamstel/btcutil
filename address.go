@@ -192,15 +192,15 @@ func DecodeAddress(addr string, defaultNet *chaincfg.Params) (Address, error) {
 	switch len(decoded) {
 	case ripemd160.Size: // P2PKH or P2SH
 		isP2PKH := chaincfg.IsPubKeyHashAddrID(netID)
-		isP2CS := chaincfg.IsStakePubKeyHashAddrID(netID)
 		isP2SH := chaincfg.IsScriptHashAddrID(netID)
+		isP2CS := chaincfg.IsStakePubKeyHashAddrID(netID)
 		switch hash160 := decoded; {
 		case isP2PKH && isP2SH:
 			return nil, ErrAddressCollision
 		case isP2PKH:
 			return newAddressPubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
 		case isP2CS:
-			return NewAddressStakePubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
+			return newAddressStakePubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
 		case isP2SH:
 			return newAddressScriptHashFromHash(hash160, netID, defaultNet.Base58CksumHasher)
 		default:
@@ -263,14 +263,24 @@ type AddressPubKeyHash struct {
 	cksumHasher base58.CksumHasher
 }
 
+// AddressStakePubKeyHash is an Address for a pay-to-pubkey-hash (P2PKH)
+// transaction.
+type AddressStakePubKeyHash struct {
+	hash        [ripemd160.Size]byte
+	netID       []byte
+	cksumHasher base58.CksumHasher
+}
+
 // NewAddressPubKeyHash returns a new AddressPubKeyHash.  pkHash mustbe 20
 // bytes.
 func NewAddressPubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHash, error) {
 	return newAddressPubKeyHash(pkHash, net.PubKeyHashAddrID, net.Base58CksumHasher)
 }
 
-func NewAddressStakePubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHash, error) {
-	return newAddressPubKeyHash(pkHash, net.StakePubKeyHashAddrID, net.Base58CksumHasher)
+// NewAddressStakePubKeyHash returns a new AddressPubKeyHash.  pkHash mustbe 20
+// bytes.
+func NewAddressStakePubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressStakePubKeyHash, error) {
+	return newAddressStakePubKeyHash(pkHash, net.PubKeyHashAddrID, net.Base58CksumHasher)
 }
 
 // newAddressPubKeyHash is the internal API to create a pubkey hash address
@@ -285,6 +295,25 @@ func newAddressPubKeyHash(pkHash, netID []byte, hasher base58.CksumHasher) (*Add
 	}
 
 	addr := &AddressPubKeyHash{}
+	copy(addr.hash[:], pkHash)
+	addr.netID = make([]byte, len(netID))
+	copy(addr.netID, netID)
+	addr.cksumHasher = hasher
+	return addr, nil
+}
+
+// newAddressStakePubKeyHash is the internal API to create a pubkey hash address
+// with a known leading identifier byte for a network, rather than looking
+// it up through its parameters.  This is useful when creating a new address
+// structure from a string encoding where the identifer byte is already
+// known.
+func newAddressStakePubKeyHash(pkHash, netID []byte, hasher base58.CksumHasher) (*AddressStakePubKeyHash, error) {
+	// Check for a valid pubkey hash length.
+	if len(pkHash) != ripemd160.Size {
+		return nil, errors.New("pkHash must be 20 bytes")
+	}
+
+	addr := &AddressStakePubKeyHash{}
 	copy(addr.hash[:], pkHash)
 	addr.netID = make([]byte, len(netID))
 	copy(addr.netID, netID)
@@ -321,6 +350,38 @@ func (a *AddressPubKeyHash) String() string {
 // when an array is more appropiate than a slice (for example, when used as map
 // keys).
 func (a *AddressPubKeyHash) Hash160() *[ripemd160.Size]byte {
+	return &a.hash
+}
+
+// EncodeAddress returns the string encoding of a pay-to-pubkey-hash
+// address.  Part of the Address interface.
+func (a *AddressStakePubKeyHash) EncodeAddress() string {
+	return encodeAddress(a.hash[:], a.netID, a.cksumHasher)
+}
+
+// ScriptAddress returns the bytes to be included in a txout script to pay
+// to a pubkey hash.  Part of the Address interface.
+func (a *AddressStakePubKeyHash) ScriptAddress() []byte {
+	return a.hash[:]
+}
+
+// IsForNet returns whether or not the pay-to-pubkey-hash address is associated
+// with the passed bitcoin network.
+func (a *AddressStakePubKeyHash) IsForNet(net *chaincfg.Params) bool {
+	return bytes.Equal(a.netID, net.PubKeyHashAddrID)
+}
+
+// String returns a human-readable string for the pay-to-pubkey-hash address.
+// This is equivalent to calling EncodeAddress, but is provided so the type can
+// be used as a fmt.Stringer.
+func (a *AddressStakePubKeyHash) String() string {
+	return a.EncodeAddress()
+}
+
+// Hash160 returns the underlying array of the pubkey hash.  This can be useful
+// when an array is more appropiate than a slice (for example, when used as map
+// keys).
+func (a *AddressStakePubKeyHash) Hash160() *[ripemd160.Size]byte {
 	return &a.hash
 }
 
@@ -420,6 +481,14 @@ type AddressPubKey struct {
 	cksumHasher  base58.CksumHasher
 }
 
+// AddressStakePubKey is an Address for a pay-to-pubkey transaction.
+type AddressStakePubKey struct {
+	pubKeyFormat PubKeyFormat
+	pubKey       *btcec.PublicKey
+	pubKeyHashID []byte
+	cksumHasher  base58.CksumHasher
+}
+
 // NewAddressPubKey returns a new AddressPubKey which represents a pay-to-pubkey
 // address.  The serializedPubKey parameter must be a valid pubkey and can be
 // uncompressed, compressed, or hybrid.
@@ -452,9 +521,58 @@ func NewAddressPubKey(serializedPubKey []byte, net *chaincfg.Params) (*AddressPu
 	return addr, nil
 }
 
+// NewAddressStakePubKey returns a new AddressPubKey which represents a pay-to-pubkey
+// address.  The serializedPubKey parameter must be a valid pubkey and can be
+// uncompressed, compressed, or hybrid.
+func NewAddressStakePubKey(serializedPubKey []byte, net *chaincfg.Params) (*AddressStakePubKey, error) {
+	pubKey, err := btcec.ParsePubKey(serializedPubKey, btcec.S256())
+	if err != nil {
+		return nil, err
+	}
+
+	// Set the format of the pubkey.  This probably should be returned
+	// from btcec, but do it here to avoid API churn.  We already know the
+	// pubkey is valid since it parsed above, so it's safe to simply examine
+	// the leading byte to get the format.
+	pkFormat := PKFUncompressed
+	switch serializedPubKey[0] {
+	case 0x02, 0x03:
+		pkFormat = PKFCompressed
+	case 0x06, 0x07:
+		pkFormat = PKFHybrid
+	}
+
+	addr := &AddressPubKey{
+		pubKeyFormat: pkFormat,
+		pubKey:       pubKey,
+	}
+	addr.pubKeyHashID = make([]byte, len(net.PubKeyHashAddrID))
+	copy(addr.pubKeyHashID, net.PubKeyHashAddrID)
+	addr.cksumHasher = net.Base58CksumHasher
+
+	return addr, nil
+}
+
 // serialize returns the serialization of the public key according to the
 // format associated with the address.
 func (a *AddressPubKey) serialize() []byte {
+	switch a.pubKeyFormat {
+	default:
+		fallthrough
+	case PKFUncompressed:
+		return a.pubKey.SerializeUncompressed()
+
+	case PKFCompressed:
+		return a.pubKey.SerializeCompressed()
+
+	case PKFHybrid:
+		return a.pubKey.SerializeHybrid()
+	}
+}
+
+// serialize returns the serialization of the public key according to the
+// format associated with the address.
+func (a *AddressStakePubKey) serialize() []byte {
 	switch a.pubKeyFormat {
 	default:
 		fallthrough
@@ -513,6 +631,50 @@ func (a *AddressPubKey) SetFormat(pkFormat PubKeyFormat) {
 	a.pubKeyFormat = pkFormat
 }
 
+// EncodeAddress returns the string encoding of the public key as a
+// pay-to-pubkey-hash.  Note that the public key format (uncompressed,
+// compressed, etc) will change the resulting address.  This is expected since
+// pay-to-pubkey-hash is a hash of the serialized public key which obviously
+// differs with the format.  At the time of this writing, most Bitcoin addresses
+// are pay-to-pubkey-hash constructed from the uncompressed public key.
+//
+// Part of the Address interface.
+func (a *AddressStakePubKey) EncodeAddress() string {
+	hash := CksumHashGen(a.cksumHasher, a.serialize())
+	return encodeAddress(hash, a.pubKeyHashID, a.cksumHasher)
+}
+
+// ScriptAddress returns the bytes to be included in a txout script to pay
+// to a public key.  Setting the public key format will affect the output of
+// this function accordingly.  Part of the Address interface.
+func (a *AddressStakePubKey) ScriptAddress() []byte {
+	return a.serialize()
+}
+
+// IsForNet returns whether or not the pay-to-pubkey address is associated
+// with the passed bitcoin network.
+func (a *AddressStakePubKey) IsForNet(net *chaincfg.Params) bool {
+	return bytes.Equal(a.pubKeyHashID, net.StakePubKeyHashAddrID)
+}
+
+// String returns the hex-encoded human-readable string for the pay-to-pubkey
+// address.  This is not the same as calling EncodeAddress.
+func (a *AddressStakePubKey) String() string {
+	return hex.EncodeToString(a.serialize())
+}
+
+// Format returns the format (uncompressed, compressed, etc) of the
+// pay-to-pubkey address.
+func (a *AddressStakePubKey) Format() PubKeyFormat {
+	return a.pubKeyFormat
+}
+
+// SetFormat sets the format (uncompressed, compressed, etc) of the
+// pay-to-pubkey address.
+func (a *AddressStakePubKey) SetFormat(pkFormat PubKeyFormat) {
+	a.pubKeyFormat = pkFormat
+}
+
 // AddressPubKeyHash returns the pay-to-pubkey address converted to a
 // pay-to-pubkey-hash address.  Note that the public key format (uncompressed,
 // compressed, etc) will change the resulting address.  This is expected since
@@ -532,6 +694,28 @@ func (a *AddressPubKey) AddressPubKeyHash() *AddressPubKeyHash {
 
 // PubKey returns the underlying public key for the address.
 func (a *AddressPubKey) PubKey() *btcec.PublicKey {
+	return a.pubKey
+}
+
+// AddressStakePubKeyHash returns the pay-to-pubkey address converted to a
+// pay-to-pubkey-hash address.  Note that the public key format (uncompressed,
+// compressed, etc) will change the resulting address.  This is expected since
+// pay-to-pubkey-hash is a hash of the serialized public key which obviously
+// differs with the format.  At the time of this writing, most Bitcoin addresses
+// are pay-to-pubkey-hash constructed from the uncompressed public key.
+func (a *AddressStakePubKey) AddressStakePubKeyHash() *AddressStakePubKeyHash {
+	addr := &AddressStakePubKeyHash{
+		netID:       a.pubKeyHashID,
+		cksumHasher: a.cksumHasher,
+	}
+
+	hash := CksumHashGen(a.cksumHasher, a.serialize())
+	copy(addr.hash[:], hash)
+	return addr
+}
+
+// PubKey returns the underlying public key for the address.
+func (a *AddressStakePubKey) PubKey() *btcec.PublicKey {
 	return a.pubKey
 }
 
