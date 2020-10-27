@@ -200,7 +200,7 @@ func DecodeAddress(addr string, defaultNet *chaincfg.Params) (Address, error) {
 		case isP2PKH:
 			return newAddressPubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
 		case isP2CS:
-			return newAddressStakePubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
+			return NewAddressStakePubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
 		case isP2SH:
 			return newAddressScriptHashFromHash(hash160, netID, defaultNet.Base58CksumHasher)
 		default:

@@ -210,7 +210,7 @@ type Params struct {
 
 	// Address encoding magics
 	PubKeyHashAddrID        []byte // First n bytes of a P2PKH address
-	StakePubKeyHashAddrID        []byte // First n bytes of a P2PKH address
+	StakePubKeyHashAddrID   []byte // First n bytes of a P2CS address
 	ScriptHashAddrID        []byte // First n bytes of a P2SH address
 	PrivateKeyID            []byte // First n bytes of a WIF private key
 	WitnessPubKeyHashAddrID []byte // First n bytes of a P2WPKH address
@@ -689,7 +689,7 @@ func IsPubKeyHashAddrID(id []byte) bool {
 // address is a pubkey hash address, script hash address, neither, or
 // undeterminable (if both return true).
 func IsStakePubKeyHashAddrID(id []byte) bool {
-	_, ok := pubKeyHashAddrIDs[string(id)]
+	_, ok := stakePubKeyHashAddrIDs[string(id)]
 	return ok
 }
 
