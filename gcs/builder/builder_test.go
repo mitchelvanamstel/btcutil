@@ -11,11 +11,11 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilG"
-	"github.com/mitchelvanamstel/btcutilG/chaincfg"
-	"github.com/mitchelvanamstel/btcutilG/gcs"
-	"github.com/mitchelvanamstel/btcutilG/gcs/builder"
-	"github.com/mitchelvanamstel/btcutilG/txscript"
+	"github.com/mitchelvanamstel/btcutilH"
+	"github.com/mitchelvanamstel/btcutilH/chaincfg"
+	"github.com/mitchelvanamstel/btcutilH/gcs"
+	"github.com/mitchelvanamstel/btcutilH/gcs/builder"
+	"github.com/mitchelvanamstel/btcutilH/txscript"
 )
 
 var (

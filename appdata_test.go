@@ -12,7 +12,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/mitchelvanamstel/btcutilG"
+	"github.com/mitchelvanamstel/btcutilH"
 )
 
 // TestAppDataDir tests the API for AppDataDir to ensure it gives expected

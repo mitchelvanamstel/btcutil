@@ -10,9 +10,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mitchelvanamstel/btcutilG/chaincfg"
+	"github.com/mitchelvanamstel/btcutilH/chaincfg"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilG"
+	"github.com/mitchelvanamstel/btcutilH"
 )
 
 // mustParseShortForm parses the passed short form script and returns the

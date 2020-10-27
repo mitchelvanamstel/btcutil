@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/mitchelvanamstel/btcutilG/chaincfg"
+	. "github.com/mitchelvanamstel/btcutilH/chaincfg"
 )
 
 // Define some of the required parameters for a user-registered

@@ -7,9 +7,9 @@ package txscript
 import (
 	"fmt"
 
-	"github.com/mitchelvanamstel/btcutilG/chaincfg"
+	"github.com/mitchelvanamstel/btcutilH/chaincfg"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilG"
+	"github.com/mitchelvanamstel/btcutilH"
 )
 
 const (
@@ -424,6 +424,13 @@ func PayToAddrScript(addr btcutil.Address) ([]byte, error) {
 
 	switch addr := addr.(type) {
 	case *btcutil.AddressPubKeyHash:
+		if addr == nil {
+			return nil, scriptError(ErrUnsupportedAddress,
+				nilAddrErrStr)
+		}
+		return payToPubKeyHashScript(addr.ScriptAddress())
+
+	case *btcutil.AddressStakePubKeyHash:
 		if addr == nil {
 			return nil, scriptError(ErrUnsupportedAddress,
 				nilAddrErrStr)
