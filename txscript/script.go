@@ -12,8 +12,8 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilF"
-	"github.com/mitchelvanamstel/btcutilF/base58"
+	"github.com/mitchelvanamstel/btcutilG"
+	"github.com/mitchelvanamstel/btcutilG/base58"
 )
 
 // Bip16Activation is the timestamp where BIP0016 is valid to use in the

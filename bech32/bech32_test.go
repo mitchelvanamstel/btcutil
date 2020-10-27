@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mitchelvanamstel/btcutilF/bech32"
+	"github.com/mitchelvanamstel/btcutilG/bech32"
 )
 
 func TestBech32(t *testing.T) {

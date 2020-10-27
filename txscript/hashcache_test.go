@@ -11,7 +11,7 @@ import (
 
 	"github.com/martinboehm/btcd/wire"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/mitchelvanamstel/btcutilF/chaincfg"
+	"github.com/mitchelvanamstel/btcutilG/chaincfg"
 )
 
 // genTestTx creates a random transaction for uses within test cases.

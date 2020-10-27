@@ -12,7 +12,7 @@ import (
 	"testing"
 
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilF/txsort"
+	"github.com/mitchelvanamstel/btcutilG/txsort"
 )
 
 // TestSort ensures the transaction sorting works according to the BIP.

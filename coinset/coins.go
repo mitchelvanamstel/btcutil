@@ -11,7 +11,7 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilF"
+	"github.com/mitchelvanamstel/btcutilG"
 )
 
 // Coin represents a spendable transaction outpoint

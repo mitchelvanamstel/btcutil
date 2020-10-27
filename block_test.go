@@ -13,7 +13,7 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilF"
+	"github.com/mitchelvanamstel/btcutilG"
 	"github.com/davecgh/go-spew/spew"
 )
 

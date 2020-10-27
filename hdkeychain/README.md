@@ -3,7 +3,7 @@ hdkeychain
 
 [![Build Status](http://img.shields.io/travis/martinboehm/btcutil.svg)](https://travis-ci.org/martinboehm/btcutil)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/mitchelvanamstel/btcutilF/hdkeychain)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/mitchelvanamstel/btcutilG/hdkeychain)
 
 Package hdkeychain provides an API for bitcoin hierarchical deterministic
 extended keys (BIP0032).
@@ -39,18 +39,18 @@ report.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/mitchelvanamstel/btcutilF/hdkeychain
+$ go get -u github.com/mitchelvanamstel/btcutilG/hdkeychain
 ```
 
 ## Examples
 
-* [NewMaster Example](http://godoc.org/github.com/mitchelvanamstel/btcutilF/hdkeychain#example-NewMaster)
+* [NewMaster Example](http://godoc.org/github.com/mitchelvanamstel/btcutilG/hdkeychain#example-NewMaster)
   Demonstrates how to generate a cryptographically random seed then use it to
   create a new master node (extended key).
-* [Default Wallet Layout Example](http://godoc.org/github.com/mitchelvanamstel/btcutilF/hdkeychain#example-package--DefaultWalletLayout)
+* [Default Wallet Layout Example](http://godoc.org/github.com/mitchelvanamstel/btcutilG/hdkeychain#example-package--DefaultWalletLayout)
   Demonstrates the default hierarchical deterministic wallet layout as described
   in BIP0032.
-* [Audits Use Case Example](http://godoc.org/github.com/mitchelvanamstel/btcutilF/hdkeychain#example-package--Audits)
+* [Audits Use Case Example](http://godoc.org/github.com/mitchelvanamstel/btcutilG/hdkeychain#example-package--Audits)
   Demonstrates the audits use case in BIP0032.
 
 ## License
