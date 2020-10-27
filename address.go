@@ -13,9 +13,9 @@ import (
 	"strings"
 
 	"github.com/martinboehm/btcd/btcec"
-	"github.com/martinboehm/btcutil/base58"
-	"github.com/mitchelvanamstel/btcutilE/bech32"
-	"github.com/mitchelvanamstel/btcutilE/chaincfg"
+	"github.com/mitchelvanamstel/btcutilF/base58"
+	"github.com/mitchelvanamstel/btcutilF/bech32"
+	"github.com/mitchelvanamstel/btcutilF/chaincfg"
 	"golang.org/x/crypto/ripemd160"
 )
 

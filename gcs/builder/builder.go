@@ -12,8 +12,8 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/martinboehm/btcutil/gcs"
-	"github.com/martinboehm/btcutil/txscript"
+	"github.com/mitchelvanamstel/btcutilF/gcs"
+	"github.com/mitchelvanamstel/btcutilF/txscript"
 )
 
 const (

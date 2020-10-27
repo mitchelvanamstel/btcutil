@@ -9,9 +9,9 @@ import (
 	"errors"
 
 	"github.com/martinboehm/btcd/btcec"
-	"github.com/martinboehm/btcutil/chaincfg"
+	"github.com/mitchelvanamstel/btcutilF/chaincfg"
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
-	"github.com/martinboehm/btcutil/base58"
+	"github.com/mitchelvanamstel/btcutilF/base58"
 )
 
 // ErrMalformedPrivateKey describes an error where a WIF-encoded private

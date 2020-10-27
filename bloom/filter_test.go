@@ -11,8 +11,8 @@ import (
 
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/martinboehm/btcutil"
-	"github.com/martinboehm/btcutil/bloom"
+	"github.com/mitchelvanamstel/btcutilF"
+	"github.com/mitchelvanamstel/btcutilF/bloom"
 )
 
 // TestFilterLarge ensures a maximum sized filter can be created.

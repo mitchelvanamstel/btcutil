@@ -19,9 +19,9 @@ import (
 	"math/big"
 
 	"github.com/martinboehm/btcd/btcec"
-	"github.com/martinboehm/btcutil"
-	"github.com/martinboehm/btcutil/base58"
-	"github.com/martinboehm/btcutil/chaincfg"
+	"github.com/mitchelvanamstel/btcutilF"
+	"github.com/mitchelvanamstel/btcutilF/base58"
+	"github.com/mitchelvanamstel/btcutilF/chaincfg"
 )
 
 const (

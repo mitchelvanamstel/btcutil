@@ -4,7 +4,7 @@ btcutil
 [![Build Status](http://img.shields.io/travis/martinboehm/btcutil.svg)](https://travis-ci.org/martinboehm/btcutil)
 [![Coverage Status](http://img.shields.io/coveralls/martinboehm/btcutil.svg)](https://coveralls.io/r/martinboehm/btcutil?branch=master)
 [![ISC License](http://img.shields.io/badge/license-ISC-blue.svg)](http://copyfree.org)
-[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/martinboehm/btcutil)
+[![GoDoc](http://img.shields.io/badge/godoc-reference-blue.svg)](http://godoc.org/github.com/mitchelvanamstel/btcutilF)
 
 Package btcutil provides bitcoin-specific convenience functions and types.
 A comprehensive suite of tests is provided to ensure proper functionality.  See
@@ -21,7 +21,7 @@ provided.
 ## Installation and Updating
 
 ```bash
-$ go get -u github.com/martinboehm/btcutil
+$ go get -u github.com/mitchelvanamstel/btcutilF
 ```
 
 ## GPG Verification Key
