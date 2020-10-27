@@ -280,7 +280,7 @@ func NewAddressPubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHa
 // NewAddressStakePubKeyHash returns a new AddressPubKeyHash.  pkHash mustbe 20
 // bytes.
 func NewAddressStakePubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressStakePubKeyHash, error) {
-	return newAddressStakePubKeyHash(pkHash, net.PubKeyHashAddrID, net.Base58CksumHasher)
+	return newAddressStakePubKeyHash(pkHash, net.StakePubKeyHashAddrID, net.Base58CksumHasher)
 }
 
 // newAddressPubKeyHash is the internal API to create a pubkey hash address
