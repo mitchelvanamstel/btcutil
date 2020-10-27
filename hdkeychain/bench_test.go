@@ -7,8 +7,8 @@ package hdkeychain_test
 import (
 	"testing"
 
-	"github.com/mitchelvanamstel/btcutilH/base58"
-	"github.com/mitchelvanamstel/btcutilH/hdkeychain"
+	"github.com/mitchelvanamstel/btcutilI/base58"
+	"github.com/mitchelvanamstel/btcutilI/hdkeychain"
 )
 
 // bip0032MasterPriv1 is the master private extended key from the first set of

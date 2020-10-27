@@ -8,7 +8,7 @@ import (
 	"github.com/martinboehm/btcd/blockchain"
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilH"
+	"github.com/mitchelvanamstel/btcutilI"
 )
 
 // merkleBlock is used to house intermediate information needed to generate a

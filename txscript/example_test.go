@@ -11,9 +11,9 @@ import (
 	"github.com/martinboehm/btcd/btcec"
 	"github.com/martinboehm/btcd/chaincfg/chainhash"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilH"
-	"github.com/mitchelvanamstel/btcutilH/chaincfg"
-	"github.com/mitchelvanamstel/btcutilH/txscript"
+	"github.com/mitchelvanamstel/btcutilI"
+	"github.com/mitchelvanamstel/btcutilI/chaincfg"
+	"github.com/mitchelvanamstel/btcutilI/txscript"
 )
 
 // This example demonstrates creating a script which pays to a bitcoin address.

@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/mitchelvanamstel/btcutilH/base58"
+	"github.com/mitchelvanamstel/btcutilI/base58"
 )
 
 func BenchmarkBase58Encode(b *testing.B) {

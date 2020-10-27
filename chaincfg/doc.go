@@ -25,8 +25,8 @@
 //          "fmt"
 //          "log"
 //
-//          "github.com/mitchelvanamstel/btcutilH"
-//          "github.com/mitchelvanamstel/btcutilH/chaincfg"
+//          "github.com/mitchelvanamstel/btcutilI"
+//          "github.com/mitchelvanamstel/btcutilI/chaincfg"
 //  )
 //
 //  var testnet = flag.Bool("testnet", false, "operate on the testnet Bitcoin network")

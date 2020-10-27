@@ -9,9 +9,9 @@ import (
 	"fmt"
 
 	"github.com/martinboehm/btcd/btcec"
-	"github.com/mitchelvanamstel/btcutilH/chaincfg"
+	"github.com/mitchelvanamstel/btcutilI/chaincfg"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilH"
+	"github.com/mitchelvanamstel/btcutilI"
 )
 
 // RawTxInWitnessSignature returns the serialized ECDA signature for the input

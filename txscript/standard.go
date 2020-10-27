@@ -7,9 +7,9 @@ package txscript
 import (
 	"fmt"
 
-	"github.com/mitchelvanamstel/btcutilH/chaincfg"
+	"github.com/mitchelvanamstel/btcutilI/chaincfg"
 	"github.com/martinboehm/btcd/wire"
-	"github.com/mitchelvanamstel/btcutilH"
+	"github.com/mitchelvanamstel/btcutilI"
 )
 
 const (
@@ -52,7 +52,9 @@ type ScriptClass byte
 const (
 	NonStandardTy         ScriptClass = iota // None of the recognized forms.
 	PubKeyTy                                 // Pay pubkey.
+	StakePubKeyTy                                 // Pay pubkey.
 	PubKeyHashTy                             // Pay pubkey hash.
+	StakePubKeyHashTy                             // Pay pubkey hash.
 	WitnessV0PubKeyHashTy                    // Pay witness pubkey hash.
 	ScriptHashTy                             // Pay to script hash.
 	WitnessV0ScriptHashTy                    // Pay to witness script hash.
@@ -65,7 +67,9 @@ const (
 var scriptClassToName = []string{
 	NonStandardTy:         "nonstandard",
 	PubKeyTy:              "pubkey",
+	StakePubKeyTy:         "p2cshash",
 	PubKeyHashTy:          "pubkeyhash",
+	StakePubKeyHashTy:          "p2cs",
 	WitnessV0PubKeyHashTy: "witness_v0_keyhash",
 	ScriptHashTy:          "scripthash",
 	WitnessV0ScriptHashTy: "witness_v0_scripthash",
@@ -95,6 +99,22 @@ func isPubkey(pops []parsedOpcode) bool {
 // isPubkeyHash returns true if the script passed is a pay-to-pubkey-hash
 // transaction, false otherwise.
 func isPubkeyHash(pops []parsedOpcode) bool {
+	return len(pops) == 5 &&
+		pops[0].opcode.value == OP_DUP &&
+		pops[1].opcode.value == OP_HASH160 &&
+		pops[2].opcode.value == OP_DATA_20 &&
+		pops[3].opcode.value == OP_EQUALVERIFY &&
+		pops[4].opcode.value == OP_CHECKSIG
+
+}
+
+func isStakePubkeyHash(pops []parsedOpcode) bool {
+	return len(pops) == 1 &&
+		pops[0].opcode.value == OP_DUP
+
+}
+
+func isP2CS(pops []parsedOpcode) bool {
 	return len(pops) == 5 &&
 		pops[0].opcode.value == OP_DUP &&
 		pops[1].opcode.value == OP_HASH160 &&
@@ -163,6 +183,8 @@ func typeOfScript(pops []parsedOpcode) ScriptClass {
 		return PubKeyTy
 	} else if isPubkeyHash(pops) {
 		return PubKeyHashTy
+	} else if isStakePubkeyHash(pops) {
+			return StakePubKeyHashTy
 	} else if isWitnessPubKeyHash(pops) {
 		return WitnessV0PubKeyHashTy
 	} else if isScriptHash(pops) {
@@ -198,7 +220,13 @@ func expectedInputs(pops []parsedOpcode, class ScriptClass) int {
 	case PubKeyTy:
 		return 1
 
+	case StakePubKeyTy:
+		return 1
+
 	case PubKeyHashTy:
+		return 2
+
+	case StakePubKeyHashTy:
 		return 2
 
 	case WitnessV0PubKeyHashTy:
@@ -391,6 +419,12 @@ func payToPubKeyHashScript(pubKeyHash []byte) ([]byte, error) {
 		Script()
 }
 
+func payToStakePubKeyHashScript(pubKeyHash []byte) ([]byte, error) {
+	return NewScriptBuilder().AddOp(OP_DUP).AddOp(OP_HASH160).
+		AddData(pubKeyHash).AddOp(OP_EQUALVERIFY).AddOp(OP_CHECKSIG).
+		Script()
+}
+
 // payToWitnessPubKeyHashScript creates a new script to pay to a version 0
 // pubkey hash witness program. The passed hash is expected to be valid.
 func payToWitnessPubKeyHashScript(pubKeyHash []byte) ([]byte, error) {
@@ -435,7 +469,7 @@ func PayToAddrScript(addr btcutil.Address) ([]byte, error) {
 			return nil, scriptError(ErrUnsupportedAddress,
 				nilAddrErrStr)
 		}
-		return payToPubKeyHashScript(addr.ScriptAddress())
+		return payToStakePubKeyHashScript(addr.ScriptAddress())
 
 	case *btcutil.AddressScriptHash:
 		if addr == nil {
@@ -548,6 +582,18 @@ func ExtractPkScriptAddrs(pkScript []byte, chainParams *chaincfg.Params) (Script
 		// Skip the pubkey hash if it's invalid for some reason.
 		requiredSigs = 1
 		addr, err := btcutil.NewAddressPubKeyHash(pops[2].data,
+			chainParams)
+		if err == nil {
+			addrs = append(addrs, addr)
+		}
+
+	case StakePubKeyHashTy:
+		// A pay-to-pubkey-hash script is of the form:
+		//  OP_DUP OP_HASH160 <hash> OP_EQUALVERIFY OP_CHECKSIG
+		// Therefore the pubkey hash is the 3rd item on the stack.
+		// Skip the pubkey hash if it's invalid for some reason.
+		requiredSigs = 1
+		addr, err := btcutil.NewAddressStakePubKeyHash(pops[2].data,
 			chainParams)
 		if err == nil {
 			addrs = append(addrs, addr)
