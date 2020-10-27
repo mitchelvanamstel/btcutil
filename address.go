@@ -192,12 +192,15 @@ func DecodeAddress(addr string, defaultNet *chaincfg.Params) (Address, error) {
 	switch len(decoded) {
 	case ripemd160.Size: // P2PKH or P2SH
 		isP2PKH := chaincfg.IsPubKeyHashAddrID(netID)
+		isP2CS := chaincfg.IsStakePubKeyHashAddrID(netID)
 		isP2SH := chaincfg.IsScriptHashAddrID(netID)
 		switch hash160 := decoded; {
 		case isP2PKH && isP2SH:
 			return nil, ErrAddressCollision
 		case isP2PKH:
 			return newAddressPubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
+		case isP2CS:
+			return newAddressStakePubKeyHash(hash160, netID, defaultNet.Base58CksumHasher)
 		case isP2SH:
 			return newAddressScriptHashFromHash(hash160, netID, defaultNet.Base58CksumHasher)
 		default:
@@ -264,6 +267,10 @@ type AddressPubKeyHash struct {
 // bytes.
 func NewAddressPubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHash, error) {
 	return newAddressPubKeyHash(pkHash, net.PubKeyHashAddrID, net.Base58CksumHasher)
+}
+
+func NewAddressStakePubKeyHash(pkHash []byte, net *chaincfg.Params) (*AddressPubKeyHash, error) {
+	return newAddressPubKeyHash(pkHash, net.StakePubKeyHashAddrID, net.Base58CksumHasher)
 }
 
 // newAddressPubKeyHash is the internal API to create a pubkey hash address

@@ -210,6 +210,7 @@ type Params struct {
 
 	// Address encoding magics
 	PubKeyHashAddrID        []byte // First n bytes of a P2PKH address
+	StakePubKeyHashAddrID        []byte // First n bytes of a P2PKH address
 	ScriptHashAddrID        []byte // First n bytes of a P2SH address
 	PrivateKeyID            []byte // First n bytes of a WIF private key
 	WitnessPubKeyHashAddrID []byte // First n bytes of a P2WPKH address
@@ -313,6 +314,7 @@ var MainNetParams = Params{
 	// Address encoding magics
 	AddressMagicLen:         1,
 	PubKeyHashAddrID:        []byte{0x00}, // starts with 1
+	StakePubKeyHashAddrID:        []byte{0x00}, // starts with 1
 	ScriptHashAddrID:        []byte{0x05}, // starts with 3
 	PrivateKeyID:            []byte{0x80}, // starts with 5 (uncompressed) or K (compressed)
 	WitnessPubKeyHashAddrID: []byte{0x06}, // starts with p2
@@ -391,6 +393,7 @@ var RegressionNetParams = Params{
 	// Address encoding magics
 	AddressMagicLen:   1,
 	PubKeyHashAddrID:  []byte{0x6f}, // starts with m or n
+	StakePubKeyHashAddrID:  []byte{0x6f}, // starts with m or n
 	ScriptHashAddrID:  []byte{0xc4}, // starts with 2
 	PrivateKeyID:      []byte{0xef}, // starts with 9 (uncompressed) or c (compressed)
 	Base58CksumHasher: base58.Sha256D,
@@ -484,6 +487,7 @@ var TestNet3Params = Params{
 	// Address encoding magics
 	AddressMagicLen:         1,
 	PubKeyHashAddrID:        []byte{0x6f}, // starts with m or n
+	StakePubKeyHashAddrID:        []byte{0x6f}, // starts with m or n
 	ScriptHashAddrID:        []byte{0xc4}, // starts with 2
 	WitnessPubKeyHashAddrID: []byte{0x03}, // starts with QW
 	WitnessScriptHashAddrID: []byte{0x28}, // starts with T7n
@@ -566,6 +570,7 @@ var SimNetParams = Params{
 	// Address encoding magics
 	AddressMagicLen:         1,
 	PubKeyHashAddrID:        []byte{0x3f}, // starts with S
+	StakePubKeyHashAddrID:        []byte{0x3f}, // starts with S
 	ScriptHashAddrID:        []byte{0x7b}, // starts with s
 	PrivateKeyID:            []byte{0x64}, // starts with 4 (uncompressed) or F (compressed)
 	WitnessPubKeyHashAddrID: []byte{0x19}, // starts with Gg
@@ -596,6 +601,7 @@ var (
 var (
 	registeredNets       map[wire.BitcoinNet]struct{}
 	pubKeyHashAddrIDs    map[string]struct{}
+	stakePubKeyHashAddrIDs    map[string]struct{}
 	scriptHashAddrIDs    map[string]struct{}
 	bech32SegwitPrefixes map[string]struct{}
 	hdPrivToPubKeyIDs    map[[4]byte][]byte
@@ -621,6 +627,7 @@ func Register(params *Params) error {
 	}
 	registeredNets[params.Net] = struct{}{}
 	pubKeyHashAddrIDs[string(params.PubKeyHashAddrID[:params.AddressMagicLen])] = struct{}{}
+	stakePubKeyHashAddrIDs[string(params.StakePubKeyHashAddrID[:params.AddressMagicLen])] = struct{}{}
 	scriptHashAddrIDs[string(params.ScriptHashAddrID[:params.AddressMagicLen])] = struct{}{}
 	hdPrivToPubKeyIDs[params.HDPrivateKeyID] = params.HDPublicKeyID[:]
 
@@ -650,6 +657,7 @@ func IsRegistered(params *Params) bool {
 func ResetParams() {
 	registeredNets = make(map[wire.BitcoinNet]struct{})
 	pubKeyHashAddrIDs = make(map[string]struct{})
+	stakePubKeyHashAddrIDs = make(map[string]struct{})
 	scriptHashAddrIDs = make(map[string]struct{})
 	bech32SegwitPrefixes = make(map[string]struct{})
 	hdPrivToPubKeyIDs = make(map[[4]byte][]byte)
@@ -670,6 +678,17 @@ func RegisterBitcoinParams() {
 // address is a pubkey hash address, script hash address, neither, or
 // undeterminable (if both return true).
 func IsPubKeyHashAddrID(id []byte) bool {
+	_, ok := pubKeyHashAddrIDs[string(id)]
+	return ok
+}
+
+// IsStakePubKeyHashAddrID returns whether the id is an identifier known to prefix a
+// pay-to-pubkey-hash address on any default or registered network.  This is
+// used when decoding an address string into a specific address type.  It is up
+// to the caller to check both this and IsScriptHashAddrID and decide whether an
+// address is a pubkey hash address, script hash address, neither, or
+// undeterminable (if both return true).
+func IsStakePubKeyHashAddrID(id []byte) bool {
 	_, ok := pubKeyHashAddrIDs[string(id)]
 	return ok
 }
