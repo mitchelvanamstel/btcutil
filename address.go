@@ -13,9 +13,9 @@ import (
 	"strings"
 
 	"github.com/martinboehm/btcd/btcec"
-	"github.com/mitchelvanamstel/btcutilC/base58"
-	"github.com/mitchelvanamstel/btcutilC/bech32"
-	"github.com/mitchelvanamstel/btcutilC/chaincfg"
+	"github.com/mitchelvanamstel/btcutilD/base58"
+	"github.com/mitchelvanamstel/btcutilD/bech32"
+	"github.com/mitchelvanamstel/btcutilD/chaincfg"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -542,12 +542,12 @@ func NewAddressStakePubKey(serializedPubKey []byte, net *chaincfg.Params) (*Addr
 		pkFormat = PKFHybrid
 	}
 
-	addr := &AddressPubKey{
+	addr := &AddressStakePubKey{
 		pubKeyFormat: pkFormat,
 		pubKey:       pubKey,
 	}
 	addr.pubKeyHashID = make([]byte, len(net.PubKeyHashAddrID))
-	copy(addr.pubKeyHashID, net.PubKeyHashAddrID)
+	copy(addr.pubKeyHashID, net.StakePubKeyHashAddrID)
 	addr.cksumHasher = net.Base58CksumHasher
 
 	return addr, nil
